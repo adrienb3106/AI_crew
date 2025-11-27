@@ -1,0 +1,6 @@
+{
+    "llm_config": {
+        "mini_model_name": "gpt-4o-mini",
+        "smart_model_name": "gpt-4o"
+    }
+}
