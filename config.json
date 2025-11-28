@@ -2,5 +2,11 @@
     "llm_config": {
         "mini_model_name": "gpt-4o-mini",
         "smart_model_name": "gpt-4o"
+    },
+    "crew_config": {
+        "verbose": true,
+        "process": "hierarchical",
+        "memory": true,
+        "output_log_file": "crew_execution.log"
     }
 }

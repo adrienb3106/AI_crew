@@ -43,12 +43,18 @@ ANTHROPIC_API_KEY="votre-clé-api-anthropic"
 GEMINI_API_KEY="votre-clé-api-gemini"
 ```
 
-### 2. Configuration du modèle (`config.json`)
+### 2. Configuration du modèle et du Crew (`config.json`)
 
-Ce fichier spécifie les modèles LLM à utiliser. Vous pouvez y ajouter des commentaires pour expliquer chaque élément.
+Ce fichier spécifie les modèles LLM à utiliser ainsi que la configuration de l'équipe (`Crew`).
 
-- `mini_model_name`: Ce modèle est utilisé pour les tâches de base par souci d'économie.
-- `smart_model_name`: Ce modèle est utilisé pour les tâches plus complexes.
+-   **`llm_config`**: Définit les modèles à utiliser.
+    -   `mini_model_name`: Ce modèle est utilisé pour les tâches de base par souci d'économie.
+    -   `smart_model_name`: Ce modèle est utilisé pour les tâches plus complexes.
+-   **`crew_config`**: Configure le comportement de l'équipe.
+    -   `verbose`: Si `true`, affiche les détails de l'exécution en temps réel.
+    -   `process`: Le mode de fonctionnement de l'équipe (`hierarchical` ou `sequential`).
+    -   `memory`: Si `true`, permet à l'équipe de se souvenir des tâches passées.
+    -   `output_log_file`: Si un nom de fichier est fourni (ex: `"crew.log"`), l'historique complet de l'exécution y sera sauvegardé.
 
 **Exemple `config.json`:**
 
@@ -57,6 +63,12 @@ Ce fichier spécifie les modèles LLM à utiliser. Vous pouvez y ajouter des com
     "llm_config": {
         "mini_model_name": "gpt-4o-mini",
         "smart_model_name": "gpt-4o"
+    },
+    "crew_config": {
+        "verbose": true,
+        "process": "hierarchical",
+        "memory": true,
+        "output_log_file": "crew_execution.log"
     }
 }
 ```

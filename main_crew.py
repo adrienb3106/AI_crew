@@ -33,14 +33,23 @@ def main():
     tasks = define_tasks(dev_agent, review_agent)
     
     # --- Création et Exécution de l'Équipe ---
+    crew_config = config.get('crew_config', {})
+    
+    # Conversion de la chaîne de caractères "hierarchical" en l'objet Process.hierarchical
+    process_type = crew_config.get('process', 'sequential').lower()
+    if process_type == 'hierarchical':
+        crew_process = Process.hierarchical
+    else:
+        crew_process = Process.sequential
+
     my_team = Crew(
-        agents=[dev_agent, review_agent],
+        agents=[manager_agent, dev_agent, review_agent],
         tasks=tasks,
-        verbose=True,
-        process=Process.hierarchical,
-        manager_agent=manager_agent,
-        memory=True,
-        output_log_file="crew_execution.log"
+        verbose=crew_config.get('verbose', True),
+        process=crew_process,
+        manager_agent=manager_agent if crew_process == Process.hierarchical else None,
+        memory=crew_config.get('memory', False),
+        output_log_file=crew_config.get('output_log_file', False)
     )
     
     print("### Démarrage du Crew ###")
