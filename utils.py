@@ -5,24 +5,25 @@ import json
 from crewai import Task, LLM
 from crewai_tools import FileWriterTool, FileReadTool
 
+from exceptions import ConfigurationError, MissingAPIKeyError
+
 def load_json_file(file_path):
     """Charge un fichier JSON et retourne son contenu."""
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
-        print(f"ERREUR: Fichier '{file_path}' introuvable.")
-        exit()
+        raise ConfigurationError(f"Fichier de configuration '{file_path}' introuvable.")
     except json.JSONDecodeError:
-        print(f"ERREUR: Le fichier '{file_path}' n'est pas un JSON valide.")
-        exit()
+        raise ConfigurationError(f"Le fichier '{file_path}' n'est pas un JSON valide.")
 
 def check_api_keys():
     """Vérifie la présence des clés API nécessaires."""
     if not any(os.getenv(key) for key in ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY"]):
-        print("FATAL ERROR: Aucune clé API de modèle (OpenAI, Anthropic, Gemini) n'a été trouvée.")
-        print("Veuillez définir au moins l'une d'elles dans votre fichier .env.")
-        exit()
+        raise MissingAPIKeyError(
+            "Aucune clé API de modèle (OpenAI, Anthropic, Gemini) n'a été trouvée. "
+            "Veuillez définir au moins l'une d'elles dans votre fichier .env."
+        )
 
 def setup_llms(config):
     """Initialise et retourne les modèles LLM."""
