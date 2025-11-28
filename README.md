@@ -2,61 +2,60 @@
 
 ## Description
 
-My AI Team est une application Python qui utilise la puissance des grands modèles de langage (LLM) pour automatiser les processus de génération et de revue de code. Elle s'appuie sur le framework `crewai` pour orchestrer une équipe d'agents IA, chacun ayant un rôle spécifique (Manager, Développeur, Réviseur), afin de collaborer sur une tâche de programmation donnée.
+My AI Team is a Python application that leverages the power of large language models (LLMs) to automate code generation and review processes. It relies on the `crewai` framework to orchestrate a team of AI agents, each with a specific role (Manager, Developer, Reviewer), to collaborate on a given programming task.
+The project is designed to be highly configurable and extensible. The project's objective, agent roles, and models used can all be customized via simple JSON configuration files.
 
-Le projet est conçu pour être hautement configurable et extensible. L'objectif du projet, les rôles des agents et les modèles utilisés peuvent tous être personnalisés via de simples fichiers de configuration JSON.
+## Features
 
-## Fonctionnalités
+- **Automated Code Generation** : Let an AI team write Python code based on your project objectives.
+- **Hierarchical Process** : A manager agent delegates tasks to a developer and a reviewer, ensuring a structured workflow.
+- **Configurable** : Easily modify the project's objective, agent backstories, and LLM models via JSON files.
+- **Extensible** : The project structure allows for easy addition of new agents, tasks, or tools.
+- **Modular Codebase** : The code is organized into logical modules for better readability and maintainability.
 
-- **Génération de code automatisée** : Laissez une équipe d'IA écrire du code Python en fonction de vos objectifs de projet.
-- **Processus hiérarchique** : Un agent manager délègue les tâches à un développeur et à un réviseur, garantissant un flux de travail structuré.
-- **Configurable** : Modifiez facilement l'objectif du projet, les backstories des agents et les modèles LLM via des fichiers JSON.
-- **Extensible** : La structure du projet permet d'ajouter facilement de nouveaux agents, tâches ou outils.
-- **Codebase modulaire** : Le code est organisé en modules logiques pour une meilleure lisibilité et maintenance.
-
-## Structure du projet
+## Project Structure
 
 ```
 .
-├── .gitignore         # Spécifie les fichiers à ignorer par Git
-├── agents.py          # Définit les agents IA pour l'équipe
-├── config.json        # Configuration pour les modèles LLM
-├── context.json       # Configuration pour l'objectif du projet et les rôles des agents
-├── main_crew.py       # Script principal pour lancer l'équipe IA
-├── README.md          # Ce fichier
-├── requirements.txt   # Dépendances Python
-├── results/           # Répertoire où les fichiers de sortie sont sauvegardés
-└── utils.py           # Fonctions utilitaires utilisées par le script principal
+├── .gitignore         # Specifies files to be ignored by Git
+├── agents.py          # Defines the AI agents for the team
+├── config.json        # Configuration for LLM models
+├── context.json       # Configuration for the project objective and agent roles
+├── main_crew.py       # Main script to launch the AI team
+├── README.md          # This file
+├── requirements.txt   # Python dependencies
+├── utils.py           # Utility functions used by the main script
+└── results/           # Directory where output files are saved
 ```
 
 ## Configuration
 
-Avant de lancer l'application, vous devez configurer les fichiers de configuration.
+Before launching the application, you need to configure the configuration files.
 
-### 1. Variables d'environnement (`.env`)
+### 1. Environment Variables (`.env`)
 
-Créez un fichier `.env` à la racine du projet et ajoutez vos clés API pour les fournisseurs de LLM. Vous avez besoin d'au moins une des clés suivantes :
+Create a `.env` file at the root of the project and add your API keys for LLM providers. You need at least one of the following keys:
 
 ```
-OPENAI_API_KEY="votre-clé-api-openai"
-ANTHROPIC_API_KEY="votre-clé-api-anthropic"
-GEMINI_API_KEY="votre-clé-api-gemini"
+OPENAI_API_KEY="your-openai-api-key"
+ANTHROPIC_API_KEY="your-anthropic-api-key"
+GEMINI_API_KEY="your-gemini-api-key"
 ```
 
-### 2. Configuration du modèle et du Crew (`config.json`)
+### 2. Model and Crew Configuration (`config.json`)
 
-Ce fichier spécifie les modèles LLM à utiliser ainsi que la configuration de l'équipe (`Crew`).
+This file specifies the LLM models to use as well as the team (`Crew`) configuration.
 
--   **`llm_config`**: Définit les modèles à utiliser.
-    -   `mini_model_name`: Ce modèle est utilisé pour les tâches de base par souci d'économie.
-    -   `smart_model_name`: Ce modèle est utilisé pour les tâches plus complexes.
--   **`crew_config`**: Configure le comportement de l'équipe.
-    -   `verbose`: Si `true`, affiche les détails de l'exécution en temps réel.
-    -   `process`: Le mode de fonctionnement de l'équipe (`hierarchical` ou `sequential`).
-    -   `memory`: Si `true`, permet à l'équipe de se souvenir des tâches passées.
-    -   `output_log_file`: Si un nom de fichier est fourni (ex: `"crew.log"`), l'historique complet de l'exécution y sera sauvegardé.
+-   **`llm_config`**: Defines the models to use.
+    -   `mini_model_name`: This model is used for basic tasks for cost efficiency.
+    -   `smart_model_name`: This model is used for more complex tasks.
+-   **`crew_config`**: Configures the team's behavior.
+    -   `verbose`: If `true`, displays real-time execution details.
+    -   `process`: The team's operating mode (`hierarchical` or `sequential`).
+    -   `memory`: If `true`, allows the team to remember past tasks.
+    -   `output_log_file`: If a filename is provided (e.g., `"crew.log"`), the full execution history will be saved there.
 
-**Exemple `config.json`:**
+**Example `config.json`:**
 
 ```json
 {
@@ -73,56 +72,56 @@ Ce fichier spécifie les modèles LLM à utiliser ainsi que la configuration de 
 }
 ```
 
-### 3. Configuration du contexte (`context.json`)
+### 3. Context Configuration (`context.json`)
 
-Ce fichier définit l'objectif global du projet ainsi que les rôles et backstories spécifiques de chaque agent IA. Vous pouvez également y ajouter des commentaires.
+This file defines the overall project objective as well as the specific roles and backstories of each AI agent. You can also add comments here.
 
-- `project_goal`: Une description claire et concise de ce que le script final doit accomplir.
-- `agents`: Un objet contenant la configuration pour chaque agent.
+- `project_goal`: A clear and concise description of what the final script should accomplish.
+- `agents`: An object containing the configuration for each agent.
 
-**Exemple `context.json`:**
+**Example `context.json`:**
 
 ```json
 {
-    "project_goal": "Développer un script Python de niveau production, performant et sécurisé...",
+    "project_goal": "Develop a production-grade, performant, and secure Python script...",
     "agents": {
         "manager": {
-            "role": "Chef de Projet (Project Manager)",
-            "goal": "Coordonner l'équipe pour produire le code...",
-            "backstory": "Tu es le garant du budget et de la qualité finale du produit..."
+            "role": "Agile Project Manager",
+            "goal": "Coordinate the team to produce code...",
+            "backstory": "You are the guarantor of the budget and the final product quality..."
         }
     }
 }
 ```
 
-## Comment ajouter et configurer un agent
+## How to add and configure an agent
 
-Le code fourni est un exemple avec une équipe de trois agents (Manager, Développeur, Réviseur). Vous pouvez facilement le modifier pour ajouter, supprimer ou adapter des agents à vos besoins.
+The provided code is an example with a team of three agents (Manager, Developer, Reviewer). You can easily modify it to add, remove, or adapt agents to your needs.
 
-### 1. Mettre à jour `context.json`
+### 1. Update `context.json`
 
-Pour chaque nouvel agent, ajoutez une entrée dans la section `agents` de `context.json`. Définissez son `role`, son `goal` (objectif) et son `backstory` (histoire/contexte).
+For each new agent, add an entry to the `agents` section of `context.json`. Define its `role`, `goal`, and `backstory`.
 
-**Exemple : Ajout d'un agent "Architecte"**
+**Example: Adding an "Architect" agent**
 
 ```json
 "architect": {
-    "role": "Architecte Logiciel",
-    "goal": "Concevoir l'architecture globale du projet et s'assurer qu'elle est évolutive et robuste.",
-    "backstory": "Tu es un architecte expérimenté, obsédé par les design patterns et les bonnes pratiques."
+    "role": "Software Architect",
+    "goal": "Design the overall project architecture and ensure it is scalable and robust.",
+    "backstory": "You are an experienced architect, obsessed with design patterns and best practices."
 }
 ```
 
-### 2. Créer l'agent dans `agents.py`
+### 2. Create the agent in `agents.py`
 
-Dans le fichier `agents.py`, utilisez la fonction `create_agents` pour instancier votre nouvel agent.
+In the `agents.py` file, use the `create_agents` function to instantiate your new agent.
 
-- Récupérez le contexte de l'agent depuis le dictionnaire `context`.
-- Créez une instance de la classe `Agent` en utilisant les informations du `context.json`.
-- Choisissez le modèle LLM (`llm_mini` ou `llm_smart`) et les outils (`tools`) appropriés pour cet agent.
-- Ajoutez le nouvel agent au dictionnaire retourné par la fonction.
+- Retrieve the agent's context from the `context` dictionary.
+- Create an instance of the `Agent` class using the information from `context.json`.
+- Choose the appropriate LLM model (`llm_mini` or `llm_smart`) and `tools` for this agent.
+- Add the new agent to the dictionary returned by the function.
 
-**Exemple : Instanciation de l'agent "Architecte"**
+**Example: Instantiating the "Architect" agent**
 
 ```python
 # agents.py
@@ -130,9 +129,9 @@ Dans le fichier `agents.py`, utilisez la fonction `create_agents` pour instancie
 from crewai import Agent
 
 def create_agents(llm_mini, llm_smart, coding_tools, context):
-    # ... (code des autres agents)
+    # ... (code of other agents)
 
-    # Ajout de l'agent Architecte
+    # Adding the Architect agent
     architect_context = context['agents']['architect']
     architect_agent = Agent(
         role=architect_context['role'],
@@ -140,142 +139,136 @@ def create_agents(llm_mini, llm_smart, coding_tools, context):
         backstory=architect_context['backstory'],
         verbose=True,
         allow_delegation=False,
-        llm=llm_smart  # Utiliser le modèle puissant pour la conception
+        llm=llm_smart  # Use the powerful model for design
     )
 
     return {
         'manager': manager_agent,
         'developer': dev_agent,
-        'review': review_agent,
-        'architect': architect_agent  # Ne pas oublier de l'ajouter ici
+        'reviewer': reviewer_agent,
+        'architect': architect_agent  # Don't forget to add it here
     }
 ```
 
-### 3. Intégrer l'agent dans le `main_crew.py`
+### 3. Integrate the agent into `main_crew.py`
 
-Enfin, intégrez le nouvel agent dans le flux de travail principal dans `main_crew.py`.
+Finally, integrate the new agent into the main workflow in `main_crew.py`.
 
-- Récupérez l'instance de l'agent depuis le dictionnaire retourné par `create_agents`.
-- Ajoutez l'agent à la liste des agents de votre `Crew`.
-- Définissez et assignez des tâches (`Task`) spécifiques pour ce nouvel agent.
+- Retrieve the agent instance from the dictionary returned by `create_agents`.
+- Add the agent to your `Crew`'s agent list.
+- If it's not the manager, ensure it's part of the `worker_agents` list passed to the `Crew`. The manager agent's task is created using `create_manager_task`.
 
-**Exemple : Intégration dans le `Crew`**
+**Example: Integration into the `Crew`**
+
 ```python
 # main_crew.py
 
-# ... (importations et configuration)
+# ... (imports and configuration)
 
 def main():
-    # ... (chargement des configurations)
+    # ... (loading configurations)
 
     agents_dict = create_agents(llm_mini, llm_smart, coding_tools, context)
-    manager_agent = agents_dict['manager']
-    dev_agent = agents_dict['developer']
-    review_agent = agents_dict['review']
-    architect_agent = agents_dict['architect'] # Récupérer l'agent
+    manager = agents_dict.pop('manager', None) # Manager is handled separately
+    worker_agents = list(agents_dict.values()) # Other agents are worker_agents
 
-    # Définir une tâche pour l'architecte
-    design_task = Task(
-        description="Concevoir l'architecture du projet en suivant les meilleures pratiques.",
-        expected_output="Un document décrivant l'architecture proposée.",
-        agent=architect_agent
-    )
-
-    # Mettre à jour la définition des tâches pour inclure le résultat de l'architecte
-    tasks = define_tasks(dev_agent, review_agent, context={'design_document': design_task})
+    # Create the manager's main task
+    task = create_manager_task(manager, context)
 
     my_team = Crew(
-        agents=[architect_agent, dev_agent, review_agent], # Ajouter l'agent à l'équipe
-        tasks=[design_task] + tasks, # Ajouter sa tâche
-        # ... (reste de la configuration du Crew)
+        agents=worker_agents, # Add worker agents to the team
+        tasks=[task], # The manager's task
+        process=Process.hierarchical,
+        manager_agent=manager,
+        # ... (rest of Crew configuration)
     )
 
-    # ... (lancement du crew)
+    # ... (launching the crew)
 ```
 
 ## Installation
 
-1.  Clonez le dépôt :
+1.  Clone the repository:
     ```bash
-    git clone <URL-du-repo>
+    git clone <URL-of-repo>
     cd my-ai-team
     ```
 
-2.  Créez un environnement virtuel et activez-le :
+2.  Create a virtual environment and activate it:
     ```bash
     python -m venv venv
-    source venv/bin/activate  # Sur Windows, utilisez `venv\Scripts\activate`
+    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
     ```
 
-3.  Installez les dépendances requises :
+3.  Install required dependencies:
     ```bash
     pip install -r requirements.txt
     ```
 
-## Utilisation
+## Usage
 
-Pour lancer l'équipe d'IA, exécutez simplement le script principal :
+To launch the AI team, simply execute the main script:
 
 ```bash
 python main_crew.py
 ```
 
-Le script initialisera les agents et les tâches, et l'équipe commencera à travailler sur l'objectif du projet. Le résultat final sera sauvegardé dans le répertoire `results`.
+The script will initialize the agents and tasks, and the team will start working on the project's objective. The final result will be saved in the `results` directory.
 
-## Référence des fonctions (`utils.py`)
+## Function Reference (`utils.py`)
 
 ---
 
 ### `load_json_file(file_path)`
 
--   **Description**: Charge un fichier JSON à partir du chemin donné et retourne son contenu sous forme de dictionnaire Python.
--   **Paramètres**:
-    -   `file_path` (str): Le chemin vers le fichier JSON.
--   **Retourne**: `dict`: Le contenu du fichier JSON.
--   **Quitte**: Si le fichier n'est pas trouvé ou si le fichier n'est pas un JSON valide.
+-   **Description**: Loads a JSON file from the given path and returns its content as a Python dictionary.
+-   **Parameters**:
+    -   `file_path` (str): The path to the JSON file.
+-   **Returns**: `dict`: The content of the JSON file.
+-   **Exits**: If the file is not found or if the file is not valid JSON.
 
 ---
 
 ### `check_api_keys()`
 
--   **Description**: Vérifie la présence des clés API nécessaires dans les variables d'environnement.
--   **Paramètres**: Aucun.
--   **Retourne**: Rien.
--   **Quitte**: Si aucune clé API n'est trouvée.
+-   **Description**: Checks for the presence of necessary API keys in environment variables.
+-   **Parameters**: None.
+-   **Returns**: Nothing.
+-   **Exits**: If no API key is found.
 
 ---
 
 ### `setup_llms(config)`
 
--   **Description**: Initialise et retourne les modèles LLM en fonction de la configuration fournie.
--   **Paramètres**:
-    -   `config` (dict): Le dictionnaire de configuration chargé depuis `config.json`.
--   **Retourne**: `tuple`: Un tuple contenant les modèles `llm_mini` et `llm_smart`.
+-   **Description**: Initializes and returns the LLM models based on the provided configuration.
+-   **Parameters**:
+    -   `config` (dict): The configuration dictionary loaded from `config.json`.
+-   **Returns**: `tuple`: A tuple containing the `llm_mini` and `llm_smart` models.
 
 ---
 
 ### `setup_output_directory(dir_name="results")`
 
--   **Description**: S'assure que le répertoire de sortie existe. S'il n'existe pas, il le crée.
--   **Paramètres**:
-    -   `dir_name` (str, optionnel): Le nom du répertoire de sortie. Par défaut, `"results"`.
--   **Retourne**: `str`: Le nom du répertoire de sortie.
+-   **Description**: Ensures that the output directory exists. If it doesn't, it creates it.
+-   **Parameters**:
+    -   `dir_name` (str, optional): The name of the output directory. Defaults to `"results"`.
+-   **Returns**: `str`: The name of the output directory.
 
 ---
 
 ### `setup_tools(output_dir)`
 
--   **Description**: Crée et retourne une liste d'outils que les agents peuvent utiliser. Dans cet exemple, il s'agit d'outils pour lire et écrire des fichiers.
--   **Paramètres**:
-    -   `output_dir` (str): Le répertoire où les outils doivent lire et écrire.
--   **Retourne**: `list`: Une liste d'instances d'outils.
+-   **Description**: Creates and returns a list of tools that agents can use. In this example, these are tools for reading and writing files.
+-   **Parameters**:
+    -   `output_dir` (str): The directory where tools should read and write.
+-   **Returns**: `list`: A list of `Tool` instances.
 
 ---
 
-### `define_tasks(dev_agent, review_agent)`
+### `create_manager_task(manager_agent, context)`
 
--   **Description**: Définit les tâches pour les agents développeur et réviseur.
--   **Paramètres**:
-    -   `dev_agent` (Agent): L'instance de l'agent développeur.
-    -   `review_agent` (Agent): L'instance de l'agent réviseur.
--   **Retourne**: `list`: Une liste d'instances de `Task`.
+-   **Description**: Creates the initial and global task for the manager, based on the project goal and process configuration.
+-   **Parameters**:
+    -   `manager_agent` (Agent): The manager agent instance.
+    -   `context` (dict): The context dictionary loaded from `context.json`.
+-   **Returns**: `Task`: A `Task` instance for the manager.

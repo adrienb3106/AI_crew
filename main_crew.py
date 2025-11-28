@@ -9,18 +9,18 @@ from utils import (
     setup_llms, 
     setup_output_directory, 
     setup_tools, 
-    define_tasks
+    create_manager_task
 )
 
 from exceptions import ConfigurationError, MissingAPIKeyError
 import sys
 
 def main():
-    """Fonction principale pour orchestrer le processus du Crew."""
+    """Main function to orchestrate the Crew process."""
     try:
         load_dotenv()
         
-        # --- Chargements et Configurations ---
+        # --- Loadings and Configurations ---
         config = load_json_file('config.json')
         context = load_json_file('context.json')
         check_api_keys()
@@ -28,50 +28,46 @@ def main():
         output_dir = setup_output_directory()
         coding_tools = setup_tools(output_dir)
         
-        # --- Création des Agents et Tâches ---
+        # --- Agent and Task Creation ---
         agents_dict = create_agents(llm_mini, llm_smart, coding_tools, context)
-        dev_agent = agents_dict['developer']
-        review_agent = agents_dict['review']
-        manager_agent = agents_dict['manager']
+        manager = agents_dict.pop('manager', None)
+        if not manager:
+            raise ConfigurationError("An agent with the name 'manager' is required for the hierarchical process.")
         
-        tasks = define_tasks(dev_agent, review_agent)
+        worker_agents = list(agents_dict.values())
         
-        # --- Création et Exécution de l'Équipe ---
+        task = create_manager_task(manager, context)
+        
         crew_config = config.get('crew_config', {})
         
-        process_type = crew_config.get('process', 'sequential').lower()
-        if process_type == 'hierarchical':
-            crew_process = Process.hierarchical
-        else:
-            crew_process = Process.sequential
-
         my_team = Crew(
-            agents=[manager_agent, dev_agent, review_agent],
-            tasks=tasks,
+            agents=worker_agents, # Use worker_agents here
+            tasks=[task],
+            process=Process.hierarchical,
+            manager_agent=manager,
             verbose=crew_config.get('verbose', True),
-            process=crew_process,
-            manager_agent=manager_agent if crew_process == Process.hierarchical else None,
             memory=crew_config.get('memory', False),
             output_log_file=crew_config.get('output_log_file', False)
         )
         
-        print("### Démarrage du Crew ###")
-        result = my_team.kickoff(inputs={'project_goal': context['project_goal']})
+        print("### Starting the Crew ###")
+        # The project_goal is now integrated into the manager's task
+        result = my_team.kickoff()
         
-        # --- Affichage des Résultats ---
+        # --- Display Results ---
         print("\n\n########################")
-        print("## RÉSULTAT FINAL ##")
+        print("## FINAL RESULT ##")
         print("########################\n")
         print(result)
         
-        print("\nUsage des tokens (Global) :")
-        print(result.token_usage)
+        print("\nGlobal Token Usage:")
+        print(my_team.usage_metrics)
 
     except (ConfigurationError, MissingAPIKeyError) as e:
-        print(f"\nERREUR CRITIQUE: {e}", file=sys.stderr)
+        print(f"\nCRITICAL ERROR: {e}", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
-        print(f"\nUNE ERREUR INATTENDUE EST SURVENUE: {e}", file=sys.stderr)
+        print(f"\nAN UNEXPECTED ERROR OCCURRED: {e}", file=sys.stderr)
         sys.exit(1)
 
 if __name__ == "__main__":
