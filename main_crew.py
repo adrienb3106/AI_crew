@@ -2,7 +2,7 @@
 
 from dotenv import load_dotenv
 from crewai import Crew, Process
-from agents import create_agents
+from agents import create_agent
 from utils import (
     load_json_file, 
     check_api_keys, 
@@ -29,7 +29,36 @@ def main():
         coding_tools = setup_tools(output_dir)
         
         # --- Agent and Task Creation ---
-        agents_dict = create_agents(llm_mini, llm_smart, coding_tools, context)
+        max_cycles = context.get('process_config', {}).get('max_cycles', 3) #3 is the default value
+        agents_dict = {}
+
+        # Manager Agent
+        agents_dict['manager'] = create_agent(
+            agent_context=context['agents']['manager'],
+            llm_mini=llm_mini,
+            llm_smart=llm_smart,
+            coding_tools=coding_tools,
+            max_cycles=max_cycles
+        )
+
+        # Developer Agent
+        agents_dict['developer'] = create_agent(
+            agent_context=context['agents']['developer'],
+            llm_mini=llm_mini,
+            llm_smart=llm_smart,
+            coding_tools=coding_tools,
+            max_cycles=max_cycles
+        )
+
+        # Reviewer Agent
+        agents_dict['reviewer'] = create_agent(
+            agent_context=context['agents']['reviewer'],
+            llm_mini=llm_mini,
+            llm_smart=llm_smart,
+            coding_tools=coding_tools,
+            max_cycles=max_cycles
+        )
+
         manager = agents_dict.pop('manager', None)
         if not manager:
             raise ConfigurationError("An agent with the name 'manager' is required for the hierarchical process.")
