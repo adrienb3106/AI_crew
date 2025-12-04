@@ -39,11 +39,11 @@ def setup_output_directory(dir_name="results"):
     return dir_name
 
 def setup_tools(output_dir):
-    """Crée et retourne les outils de manipulation de fichiers."""
-    return [
-        FileWriterTool(root_dir=output_dir),
-        FileReadTool(root_dir=output_dir)
-    ]
+    """Crée et retourne un dictionnaire d'outils disponibles."""
+    return {
+        "file_writer": FileWriterTool(root_dir=output_dir),
+        "file_reader": FileReadTool(root_dir=output_dir)
+    }
 
 def create_manager_task(manager_agent, context):
     """Creates the initial and global task for the manager."""
