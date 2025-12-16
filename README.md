@@ -215,6 +215,42 @@ python main_crew.py
 
 The script will initialize the agents and tasks, and the team will start working on the project's objective. The final result will be saved in the `results` directory.
 
+## Docker Usage
+
+You can also run this project inside a Docker container.
+
+### 1. Build the image
+
+```bash
+docker build -t my-ai-team .
+```
+
+### 2. Run the container
+
+To run the container, you need to mount your configuration files and the output directory.
+
+**Linux/Mac:**
+```bash
+docker run --rm \
+  --env-file .env \
+  -v $(pwd)/config.json:/app/config.json \
+  -v $(pwd)/context.json:/app/context.json \
+  -v $(pwd)/dossier_resultats:/app/dossier_resultats \
+  my-ai-team
+```
+
+**Windows (PowerShell):**
+```powershell
+docker run --rm `
+  --env-file .env `
+  -v ${PWD}/config.json:/app/config.json `
+  -v ${PWD}/context.json:/app/context.json `
+  -v ${PWD}/dossier_resultats:/app/dossier_resultats `
+  my-ai-team
+```
+
+**Note:** Mounting `config.json` and `context.json` allows you to change the agents or the model configuration without rebuilding the Docker image. The output directory (e.g., `dossier_resultats`) must match what is defined in your `config.json`.
+
 ## Function Reference (`utils.py`)
 
 ---

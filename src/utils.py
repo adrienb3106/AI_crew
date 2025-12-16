@@ -5,7 +5,7 @@ import json
 from crewai import Task, LLM
 from crewai_tools import FileWriterTool, FileReadTool
 
-from exceptions import ConfigurationError, MissingAPIKeyError
+from src.exceptions import ConfigurationError, MissingAPIKeyError
 
 def load_json_file(file_path):
     """Loads a JSON file and returns its content."""

@@ -2,8 +2,10 @@
 
 from dotenv import load_dotenv
 from crewai import Crew, Process
-from agents import create_agent
-from utils import (
+from dotenv import load_dotenv
+from crewai import Crew, Process
+from src.agents import create_agent
+from src.utils import (
     load_json_file, 
     check_api_keys, 
     setup_llms, 
@@ -12,8 +14,9 @@ from utils import (
     create_manager_task
 )
 
-from exceptions import ConfigurationError, MissingAPIKeyError
+from src.exceptions import ConfigurationError, MissingAPIKeyError
 import sys
+import os
 
 def main():
     """Main function to orchestrate the Crew process."""
@@ -21,8 +24,13 @@ def main():
         load_dotenv()
         
         # --- Loadings and Configurations ---
-        config = load_json_file('config.json')
-        context = load_json_file('context.json')
+        # Remonter d'un cran pour trouver config/ depuis src/
+        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        config_path = os.path.join(base_path, 'config', 'config.json')
+        context_path = os.path.join(base_path, 'config', 'context.json')
+
+        config = load_json_file(config_path)
+        context = load_json_file(context_path)
         check_api_keys()
         llm_mini, llm_smart = setup_llms(config)
         
