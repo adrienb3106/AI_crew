@@ -2,12 +2,13 @@
 
 from crewai import Agent
 
-def create_agent(agent_context, llm_mini, llm_smart, coding_tools, max_cycles):
+def create_agent(agent_context, llm_mini, llm_smart, coding_tools, max_cycles, output_dir):
     """Crée et retourne un seul agent à partir de son contexte."""
     agent_config = agent_context.get('config', {})
     
     # Formattage du but pour y inclure les variables de processus
-    goal = agent_context['goal'].format(max_cycles=max_cycles)
+    goal = agent_context['goal'].format(max_cycles=max_cycles, output_dir=output_dir)
+    backstory = agent_context['backstory'].format(output_dir=output_dir)
     
     # Détermination des outils à utiliser
     tools = []
@@ -25,7 +26,7 @@ def create_agent(agent_context, llm_mini, llm_smart, coding_tools, max_cycles):
     return Agent(
         role=agent_context['role'],
         goal=goal,
-        backstory=agent_context['backstory'],
+        backstory=backstory,
         verbose=True,  # Peut être externalisé plus tard si nécessaire
         allow_delegation=agent_config.get('allow_delegation', False),
         llm=llm,

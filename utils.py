@@ -38,11 +38,75 @@ def setup_output_directory(dir_name="results"):
     print(f"Output directory ensured: '{dir_name}'")
     return dir_name
 
+from crewai.tools import BaseTool
+from crewai_tools import FileReadTool
+
+# --- File Registry System ---
+
+class FileRegistry:
+    """Singleton to store created files."""
+    _instance = None
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(FileRegistry, cls).__new__(cls)
+            cls._instance.files = []
+        return cls._instance
+
+    def add_file(self, filename):
+        if filename not in self.files:
+            self.files.append(filename)
+    
+    def get_files(self):
+        return self.files
+
+class ListFilesTool(BaseTool):
+    name: str = "List Files"
+    description: str = "Lists all files created during this session. Use this to verify exact filenames before reading them."
+    registry: FileRegistry = None
+
+    def __init__(self, registry):
+        super().__init__()
+        self.registry = registry
+
+    def _run(self, **kwargs) -> str:
+        files = self.registry.get_files()
+        if not files:
+            return "No files have been created yet."
+        return "Files created: " + ", ".join(files)
+
+class SmartFileWriterTool(BaseTool):
+    name: str = "Smart File Writer"
+    description: str = "Writes content to a file and registers it directly in the system. Arguments: filename (str), content (str)."
+    root_dir: str = ""
+    registry: FileRegistry = None
+
+    def __init__(self, root_dir, registry):
+        super().__init__()
+        self.root_dir = root_dir
+        self.registry = registry
+
+    def _run(self, filename: str, content: str) -> str:
+        try:
+            full_path = os.path.join(self.root_dir, filename)
+            with open(full_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            
+            self.registry.add_file(filename)
+            return f"Successfully created file '{filename}' and registered it in the system."
+        except Exception as e:
+            return f"Error writing file: {str(e)}"
+
+# ---
+
 def setup_tools(output_dir):
     """Crée et retourne un dictionnaire d'outils disponibles."""
+    registry = FileRegistry()
+    
     return {
-        "file_writer": FileWriterTool(root_dir=output_dir),
-        "file_reader": FileReadTool(root_dir=output_dir)
+        "file_writer": SmartFileWriterTool(root_dir=output_dir, registry=registry),
+        "file_reader": FileReadTool(root_dir=output_dir),
+        "list_files": ListFilesTool(registry=registry)
     }
 
 def create_manager_task(manager_agent, context):

@@ -25,7 +25,9 @@ def main():
         context = load_json_file('context.json')
         check_api_keys()
         llm_mini, llm_smart = setup_llms(config)
-        output_dir = setup_output_directory()
+        
+        output_dir_name = config.get('crew_config', {}).get('output_dir_name', 'results')
+        output_dir = setup_output_directory(output_dir_name)
         coding_tools = setup_tools(output_dir)
         
         # --- Agent and Task Creation ---
@@ -39,7 +41,8 @@ def main():
                 llm_mini=llm_mini,
                 llm_smart=llm_smart,
                 coding_tools=coding_tools,
-                max_cycles=max_cycles
+                max_cycles=max_cycles,
+                output_dir=output_dir
             )
 
         manager = agents_dict.pop('manager', None)
